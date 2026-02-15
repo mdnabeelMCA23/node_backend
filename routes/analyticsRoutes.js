@@ -6,20 +6,28 @@ const axios = require("axios");
 router.get("/stats/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-
     console.log("Node received userId:", userId);
 
-    // Call Python FastAPI (CORRECT URL)
     const response = await axios.get(
       `https://python-backend-dnwl.onrender.com/analytics/stats/${userId}`,
-      { timeout: 20000 }
+      {
+        timeout: 30000,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
     );
 
-    res.json(response.data);
+    console.log("Python Response:", response.data);
+
+    return res.status(200).json(response.data);
 
   } catch (error) {
-    console.error("Analytics Error:", error.message);
-    res.status(500).json({ message: "Failed to fetch analytics" });
+    console.error("Full Analytics Error:", error.response?.data || error.message);
+
+    return res.status(500).json({
+      error: error.response?.data || error.message
+    });
   }
 });
 
