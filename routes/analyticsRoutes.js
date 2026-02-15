@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-// GET USER ANALYTICS
 router.get("/stats/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -11,22 +10,20 @@ router.get("/stats/:userId", async (req, res) => {
     const response = await axios.get(
       `https://python-backend-dnwl.onrender.com/analytics/stats/${userId}`,
       {
-        timeout: 30000,
-        headers: {
-          "Content-Type": "application/json"
-        }
+        timeout: 120000 // ⬅️ 2 MINUTES (Render cold start fix)
       }
     );
 
-    console.log("Python Response:", response.data);
+    console.log("Python success");
 
-    return res.status(200).json(response.data);
+    res.json(response.data);
 
   } catch (error) {
-    console.error("Full Analytics Error:", error.response?.data || error.message);
+    console.error("REAL ERROR:", error.code, error.message);
 
-    return res.status(500).json({
-      error: error.response?.data || error.message
+    res.status(500).json({
+      message: "Python service is waking up. Try again in 20 seconds.",
+      debug: error.message
     });
   }
 });
