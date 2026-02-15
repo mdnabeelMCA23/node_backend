@@ -9,9 +9,10 @@ router.get("/stats/:userId", async (req, res) => {
 
     console.log("Node received userId:", userId);
 
-    // Call Python FastAPI
+    // Call Python FastAPI (CORRECT URL)
     const response = await axios.get(
-      `http://https://python-backend-dnwl.onrender.com/analytics/stats/${userId}`
+      `https://python-backend-dnwl.onrender.com/analytics/stats/${userId}`,
+      { timeout: 20000 }
     );
 
     res.json(response.data);
